@@ -38,7 +38,8 @@ static bool ship_is_hit(uint8_t hits, uint8_t index) {
   return (hits & (1 << index)) != 0;
 }
 
-#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+#define ARRAY_SIZE(arr)                                \
+  (sizeof(arr) / sizeof((arr)[0])) // Array size
 
 typedef enum ShipHitInfo {
   SHIPINFO_NONE,
