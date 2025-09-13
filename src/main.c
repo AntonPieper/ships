@@ -1,5 +1,6 @@
 #include "Vec2i.h"
 #include <GameState.h>
+#include <span.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -125,8 +126,7 @@ int main(int argc, char **argv) {
       .board = {.size = {.x = 10, .y = 10}},
       .cursor = {.x = 5, .y = 5},
       .players = {
-          [0] = {.name = "Player 1",
-                 .name_length = 8,
+          [0] = {.name = SPAN(PlayerName, "Player 1"),
                  .ships = {
                      [0] = {.position = {3, 2},
                             .type = SHIPTYPE_BATTLESHIP,
