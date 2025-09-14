@@ -1,46 +1,53 @@
-#include "Vec2i.h"
-#include <GameState.h>
-#include <span.h>
+#include <core/GameState.h>
+#include <core/Player.h>
+#include <core/Ship.h>
+#include <core/Vec2i.h>
+#include <core/types.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <utils/span.h>
+
+#include "app/include/app/intent.h"
+#include "utils/span.h"
 
 static size_t ship_length(ShipType type) {
   switch (type) {
-  case SHIPTYPE_PATROL_BOAT:
-    return 2;
-  case SHIPTYPE_SUBMARINE:
-    return 3;
-  case SHIPTYPE_DESTROYER:
-    return 3;
-  case SHIPTYPE_BATTLESHIP:
-    return 4;
-  case SHIPTYPE_CARRIER:
-    return 5;
+    case SHIPTYPE_PATROL_BOAT:
+      return 2;
+    case SHIPTYPE_SUBMARINE:
+      return 3;
+    case SHIPTYPE_DESTROYER:
+      return 3;
+    case SHIPTYPE_BATTLESHIP:
+      return 4;
+    case SHIPTYPE_CARRIER:
+      return 5;
   }
 }
 
-static Vec2i
-orientation_dir(ShipOrientation orientatiom) {
+static Vec2i orientation_dir(
+    ShipOrientation orientatiom) {
   switch (orientatiom) {
-  case SHIPORIENTATION_UP:
-    return (Vec2i){.x = 0, .y = -1};
-  case SHIPORIENTATION_RIGHT:
-    return (Vec2i){.x = 1, .y = 0};
-  case SHIPORIENTATION_DOWN:
-    return (Vec2i){.x = 0, .y = 1};
-  case SHIPORIENTATION_LEFT:
-    return (Vec2i){.x = -1, .y = 0};
+    case SHIPORIENTATION_UP:
+      return (Vec2i){.x = 0, .y = -1};
+    case SHIPORIENTATION_RIGHT:
+      return (Vec2i){.x = 1, .y = 0};
+    case SHIPORIENTATION_DOWN:
+      return (Vec2i){.x = 0, .y = 1};
+    case SHIPORIENTATION_LEFT:
+      return (Vec2i){.x = -1, .y = 0};
   }
 }
 
-static bool ship_is_hit(uint8_t hits, uint8_t index) {
+static bool ship_is_hit(HitMask hits, uint8_t index) {
   return (hits & (1 << index)) != 0;
 }
 
-#define ARRAY_SIZE(arr)                                \
-  (sizeof(arr) / sizeof((arr)[0])) // Array size
+#define ARRAY_SIZE(arr) \
+  (sizeof(arr) / sizeof((arr)[0]))  // Array size
 
 typedef enum ShipHitInfo {
   SHIPINFO_NONE,
@@ -96,23 +103,23 @@ static void print_state(const GameState *state,
 
       const char *cell;
       switch (info.hit_info) {
-      case SHIPINFO_ALIVE: {
-        if (Vec2i_eq(cell_position, ship->position)) {
-          cell = "()";
-        } else {
-          cell = "[]";
-        }
-      } break;
-      case SHIPINFO_HIT: {
-        if (Vec2i_eq(cell_position, ship->position)) {
-          cell = "XX";
-        } else {
-          cell = "××";
-        }
-      } break;
-      case SHIPINFO_NONE: {
-        cell = ". ";
-      } break;
+        case SHIPINFO_ALIVE: {
+          if (Vec2i_eq(cell_position, ship->position)) {
+            cell = "()";
+          } else {
+            cell = "[]";
+          }
+        } break;
+        case SHIPINFO_HIT: {
+          if (Vec2i_eq(cell_position, ship->position)) {
+            cell = "XX";
+          } else {
+            cell = "××";
+          }
+        } break;
+        case SHIPINFO_NONE: {
+          cell = ". ";
+        } break;
       }
       fputs(cell, file);
     }
@@ -121,12 +128,23 @@ static void print_state(const GameState *state,
   fflush(file);
 }
 
+static const Intent intents[] = {
+    (Intent){.type = INTENTTYPE_NEW_GAME},
+    (Intent){
+        .type = INTENTYPE_SET_PLAYER_NAME,
+        .as_set_player_name =
+            STATIC_SPAN(PlayerName, "Player 1"),
+    },
+    (Intent){.type = INTENTTYPE_COMMIT_PLACEMENT},
+};
+
 int main(int argc, char **argv) {
   GameState state = {
       .board = {.size = {.x = 10, .y = 10}},
       .cursor = {.x = 5, .y = 5},
       .players = {
-          [0] = {.name = SPAN(PlayerName, "Player 1"),
+          [0] = {.name = STATIC_SPAN(PlayerName,
+                                     "Player 1"),
                  .ships = {
                      [0] = {.position = {3, 2},
                             .type = SHIPTYPE_BATTLESHIP,
@@ -145,4 +163,28 @@ int main(int argc, char **argv) {
                             .hits = 0b00000111},
                  }}}};
   print_state(&state, stdout);
+  fputs("Applying intents:\n", stdout);
+  for (size_t i = 0; i < ARRAY_SIZE(intents); ++i) {
+    const Intent *intent = &intents[i];
+    ReduceResult result = intent_reduce(&state, intent);
+    if (result.effect == REDUCEEFFECT_SUCCESS) {
+      state = result.state;
+    }
+    const char *effect_description;
+    switch (result.effect) {
+      case REDUCEEFFECT_INVALID:
+        effect_description = "invalid";
+        break;
+      case REDUCEEFFECT_NONE:
+        effect_description = "none";
+        break;
+      case REDUCEEFFECT_SUCCESS:
+        effect_description = "success";
+        break;
+    }
+    print_intent(intent);
+    printf(" -> %s\n", effect_description);
+    print_state(&state, stdout);
+  }
+  exit(0);
 }
