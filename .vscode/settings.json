@@ -1,3 +1,11 @@
 {
-    "chat.disableAIFeatures": true
+  "chat.disableAIFeatures": true,
+  "yaml.schemas": {
+    "https://www.schemastore.org/clang-tidy.json": [
+      "file:///workspaces/ships/.clang-tidy"
+    ],
+    "https://json.schemastore.org/clang-format.json": [
+        "file:///workspaces/ships/.clang-format"
+    ]
+  }
 }
