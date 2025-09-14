@@ -19,7 +19,8 @@
     "vscode": {
       "extensions": [
         "ms-vscode.cpptools-extension-pack",
-        "VisualStudioExptTeam.vscodeintellicode"
+        "VisualStudioExptTeam.vscodeintellicode",
+        "llvm-vs-code-extensions.vscode-clangd"
       ]
     }
   }
