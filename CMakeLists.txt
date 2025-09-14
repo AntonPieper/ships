@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(ships)
+project(ships LANGUAGES C)
 
 if(NOT CMAKE_BUILD_TYPE)
   set(default_build_type "Debug")

@@ -1,7 +1,7 @@
 #ifndef APP_INTENT_H
 #define APP_INTENT_H
 
-#include "GameState.h"
+#include <core/GameState.h>
 
 typedef enum IntentType {
   INTENTTYPE_NEW_GAME,
@@ -9,7 +9,7 @@ typedef enum IntentType {
   INTENTTYPE_COMMIT_PLACEMENT,
   INTENTTYPE_ATTACK_AT,
   INTENTTYPE_QUIT,
-} IntentKind;
+} IntentType;
 
 typedef struct IntentNewGame {
   Size size;
@@ -20,11 +20,11 @@ typedef struct IntentSetPlayerName {
 } IntentSetPlayerName;
 
 typedef struct IntentAttackAt {
-  Position attack_positon;
+  Position at;
 } IntentAttackAt;
 
 typedef struct Intent {
-  IntentKind type;
+  IntentType type;
   union {
     IntentNewGame as_new_game;
     IntentSetPlayerName as_set_player_name;
@@ -46,5 +46,7 @@ typedef struct ReduceResult {
 ReduceResult
 intent_reduce(const GameState *restrict old,
               const Intent *restrict intent);
+
+void print_intent(const Intent *intent);
 
 #endif /* ifndef APP_INTENT_H */

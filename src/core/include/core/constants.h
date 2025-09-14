@@ -1,0 +1,8 @@
+#ifndef CORE_CONSTANTS_H
+#define CORE_CONSTANTS_H
+
+#define SHIP_COUNT 10
+#define PLAYER_COUNT 2
+#define PLAYER_MAX_NAME_LENGTH 32
+
+#endif // !CORE_CONSTANTS_H

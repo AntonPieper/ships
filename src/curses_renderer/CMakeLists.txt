@@ -9,8 +9,9 @@ if(Curses_FOUND AND NOT TARGET Curses::Curses)
   )
 endif()
 
-add_library(curses_renderer curses_renderer.c)
-target_include_directories(curses_renderer PUBLIC .)
+add_library(curses_renderer renderer.c)
+target_include_directories(curses_renderer PUBLIC ./include)
+
 target_link_libraries(curses_renderer
   PRIVATE
     Curses::Curses

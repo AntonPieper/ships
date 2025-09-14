@@ -1,3 +1,3 @@
-add_library(intent intent.c)
-target_include_directories(intent PUBLIC .)
-target_link_libraries(intent PUBLIC core)
+add_library(app intent.c)
+target_include_directories(app PUBLIC ./include)
+target_link_libraries(app PUBLIC core)
