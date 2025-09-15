@@ -20,4 +20,5 @@ set(PROJECT_VERSION
 )
 message(STATUS "${PROJECT_NAME} version: ${PROJECT_VERSION}")
 
-add_subdirectory(./src)
+add_subdirectory(libs)
+add_subdirectory(apps)

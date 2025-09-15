@@ -1,3 +1,4 @@
+#include <app/intent.h>
 #include <core/GameState.h>
 #include <core/Player.h>
 #include <core/Ship.h>
@@ -9,9 +10,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <utils/span.h>
-
-#include "app/include/app/intent.h"
-#include "utils/span.h"
 
 static size_t ship_length(ShipType type) {
   switch (type) {

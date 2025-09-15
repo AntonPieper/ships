@@ -9,10 +9,12 @@ if(Curses_FOUND AND NOT TARGET Curses::Curses)
   )
 endif()
 
-add_library(curses_renderer renderer.c)
-target_include_directories(curses_renderer PUBLIC ./include)
+add_library(renderer_curses STATIC ./src/renderer.c)
+add_library(renderer::curses ALIAS renderer_curses)
 
-target_link_libraries(curses_renderer
+target_include_directories(renderer_curses PUBLIC ./include)
+
+target_link_libraries(renderer_curses
   PRIVATE
     Curses::Curses
   PUBLIC

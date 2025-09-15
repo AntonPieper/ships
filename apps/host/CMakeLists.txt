@@ -1,0 +1,1 @@
+add_executable(host ./src/main.c)

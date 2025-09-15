@@ -1,0 +1,2 @@
+add_subdirectory(curses_renderer)
+add_subdirectory(print_renderer)
